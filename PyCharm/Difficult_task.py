@@ -86,10 +86,7 @@ def load_students(file_name):
 @click.command()
 @click.argument('command')
 @click.argument('filename')
-@click.option('--name', help='ФИО студента')
-@click.option('--group', help='Группа студента')
-@click.option('--mark', help='Оценка студента')
-def main(command, filename, name, group, mark):
+def main(command, filename):
     """
     Главная функция
     """
@@ -101,8 +98,8 @@ def main(command, filename, name, group, mark):
 
     if command == "add":
         name = click.prompt("Введите ФИО студета: ")
-        group = click.prompt("Введите номер группы студета: ")
-        mark = click.prompt("Введите оценку студета: ")
+        group = int(click.prompt("Введите номер группы студета: "))
+        mark = int(click.prompt("Введите оценку студета: "))
         students = add_student(
             students,
             name,
