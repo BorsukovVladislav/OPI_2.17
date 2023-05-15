@@ -6,18 +6,18 @@ import os.path
 import click
 
 
-def add_student(students, name, group, mark):
+def add_student(studs, n, g, m):
     """
     Добавление студента в список
     """
-    students.append(
+    studs.append(
         {
-            "name": name,
-            "group": group,
-            "mark": mark
+            "name": n,
+            "group": g,
+            "mark": m
         }
     )
-    return students
+    return studs
 
 
 def out_students(list_stud):
@@ -83,40 +83,56 @@ def load_students(file_name):
         return json.load(fin)
 
 
-@click.command()
-@click.argument('command')
-@click.argument('filename')
-def main(command, filename):
+@click.group()
+@click.pass_context
+def main(students):
     """
     Главная функция
     """
-    is_dirty = False
+    students.ensure_object(dict)
+
+
+@main.command()
+@click.pass_context
+@click.argument('filename', type=click.Path(exists=True))
+@click.option('--name', prompt='Введите ФИО студента')
+@click.option('--group', prompt='Введите группу студента')
+@click.option('--mark', prompt='Введите оценку студента', type=float)
+def add(students, name, group, mark, filename):
+    """
+    Добавить новый товар.
+    """
     if os.path.exists(filename):
         students = load_students(filename)
     else:
         students = []
 
-    if command == "add":
-        name = click.prompt("Введите ФИО студета: ")
-        group = int(click.prompt("Введите номер группы студета: "))
-        mark = int(click.prompt("Введите оценку студета: "))
-        students = add_student(
-            students,
-            name,
-            group,
-            mark
-        )
-        is_dirty = True
+    students = add_student(students, name, group, mark)
+    save_students(filename, students)
 
-    elif command == "list":
+
+@main.command()
+@click.pass_context
+@click.argument('filename', type=click.Path(exists=True))
+def list(students, filename):
+    """
+    Отобразить список студентов.
+    """
+    if os.path.exists(filename):
+        students = load_students(filename)
         out_students(students)
 
-    elif command == "filter":
-        filter_list = students_filter(students)
-        out_students(filter_list)
 
-    if is_dirty:
-        save_students(filename, students)
+@main.command()
+@click.pass_context
+@click.argument('filename', type=click.Path(exists=True))
+def filter(students, filename):
+    """
+    Выбрать товары из магазина.
+    """
+    if os.path.exists(filename):
+        students = load_students(filename)
+        out_students(students_filter(students))
 
 
 if __name__ == '__main__':
