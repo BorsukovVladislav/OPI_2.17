@@ -94,13 +94,13 @@ def main(students):
 
 @main.command()
 @click.pass_context
-@click.argument('filename', type=click.Path(exists=True))
 @click.option('--name', prompt='Введите ФИО студента')
 @click.option('--group', prompt='Введите группу студента')
-@click.option('--mark', prompt='Введите оценку студента', type=float)
+@click.option('--mark', prompt='Введите оценку студента', type=int)
+@click.argument('filename', type=click.Path(exists=True))
 def add(students, name, group, mark, filename):
     """
-    Добавить новый товар.
+    добавить нового студента.
     """
     if os.path.exists(filename):
         students = load_students(filename)
@@ -128,7 +128,7 @@ def list(students, filename):
 @click.argument('filename', type=click.Path(exists=True))
 def filter(students, filename):
     """
-    Выбрать товары из магазина.
+    Отфильтрованный список студентов
     """
     if os.path.exists(filename):
         students = load_students(filename)
